@@ -1011,11 +1011,6 @@ let channel_06 = new Entity()
       })
     )
 
-      let zone_01 = new Dash_Zone('zone_1', new Transform({
-          position: new Vector3(24, 1, 24),
-          scale: new Vector3(8, 1, 8)
-      }))
-
       //Channel Trigger 06
       const trigger_06 = new Entity()
       trigger_06.addComponent(new PlaneShape())
@@ -1060,7 +1055,6 @@ let channel_06 = new Entity()
       }))
 
 //Set parent
-zone_01.setParent(channel_06)
 trigger_06.setParent(channel_06)
 arena.setParent(channel_06)
 preload_06.setParent(channel_06)
