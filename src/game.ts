@@ -914,6 +914,12 @@ let channel_04 = new Entity()
               rotation: Quaternion.Euler(0, 180, 0)
       }))
 
+      const zone_01 = new Dash_Zone('zone1', new Transform({
+          position: new Vector3(16, 1.5, 16),
+          scale: new Vector3(4, 3, 4)
+      }))
+      zone_01.enableDebug()
+
       //preload_04
       let preload_04 = new Entity()
       let preload_04Path:string = "models/topo.glb"
@@ -927,6 +933,7 @@ let channel_04 = new Entity()
 //Set parent
 trigger_04.setParent(channel_04)
 spiral.setParent(channel_04)
+zone_01.setParent(channel_04)
 preload_04.setParent(channel_04)
 
 //specify start state to run when the scene begins. move/change this line of code to change the starting channel.
