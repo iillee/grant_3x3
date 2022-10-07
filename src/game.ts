@@ -1,5 +1,4 @@
 import * as utils from '@dcl/ecs-scene-utils'
-import { Dash_Zone } from 'dcldash'
 
 //Material 00 - White
 const material00 = new Material()
@@ -87,16 +86,19 @@ const material03 = new Material()
 engine.addSystem(new ColorSystem3())
 
 //sounds
-const clip = new AudioClip("sounds/button.mp3")
-const click = new AudioSource(clip)
+const sound01 = new AudioClip("sounds/button.mp3")
+const click = new AudioSource(sound01)
 
-const jam = new AudioClip("sounds/kal_01.mp3")
-const music = new AudioSource(jam)
+const sound02 = new AudioClip("sounds/kal_01.mp3")
+const music = new AudioSource(sound02)
 
-const water = new AudioClip("sounds/pond.mp3")
-const pond = new AudioSource(water)
+const sound03 = new AudioClip("sounds/pond.mp3")
+const pond = new AudioSource(sound03)
 
-//Ground Plane
+const sound04 = new AudioClip("sounds/wind.mp3")
+const wind = new AudioSource(sound04)
+
+//Constant - Ground Plane
 const ground = new Entity()
 ground.addComponent(new PlaneShape())
 ground.addComponent(material00)
@@ -108,7 +110,7 @@ ground.addComponent(
     }))
 engine.addEntity(ground)
 
-//orb (trigger signifyer)
+//Constant - orb (trigger signifyer)
 const orb = new Entity()
 orb.addComponent(new SphereShape())
 orb.getComponent(SphereShape).withCollisions = false
@@ -119,18 +121,7 @@ orb.addComponent(new Transform({
 }))
 engine.addEntity(orb)
 
-//Jump Text
-let jump = new Entity()
-let jumpPath:string = "models/jump.glb"
-    jump.addComponent(new GLTFShape(jumpPath))
-    jump.addComponent(new Transform({
-        position: new Vector3(32, 0, 32),
-        scale: new Vector3(1, 1, 1),
-        rotation: Quaternion.Euler(0, 0, 0)
-}))
-engine.addEntity(jump)
-
-// constant base
+// Constant - base
 let base = new Entity()
 let basePath:string = "models/base.glb"
     base.addComponent(new GLTFShape(basePath))
@@ -183,7 +174,7 @@ let channel_01 = new Entity()
                 rotation: Quaternion.Euler(0, 180, 0)
         }))
 
-        //Pre Load main models of each channel in the channel before it scaled to zero. Models always load faster the second time.
+        //Pre Load main models of each channel in the channel before it scaled to zero. Models always load faster the second time around.
 
         //preload_01
         let preload_01 = new Entity()
@@ -199,6 +190,9 @@ let channel_01 = new Entity()
 trigger_01.setParent(channel_01)
 pavillion.setParent(channel_01)
 preload_01.setParent(channel_01)
+
+//specify start state to run when the scene begins. move/change this line of code to change the starting channel.
+engine.addEntity(channel_01)
 
 //Channel 02 - Parent
 let channel_02 = new Entity()
@@ -759,7 +753,7 @@ let channel_03 = new Entity()
       wall_02.addComponent(new PlaneShape())
       wall_02.addComponent(material03)
       wall_02.addComponent(new Transform({
-        position: new Vector3(24, 30, 24),
+        position: new Vector3(24, 27.5, 24),
         scale: new Vector3(40, 40, 1),
         rotation: Quaternion.Euler(90, 90, 0)
       }))
@@ -837,16 +831,6 @@ let channel_03 = new Entity()
       music.playing = true
       music.loop = true
 
-      const streamSource = new Entity()
-      streamSource.addComponent(
-        new AudioStream(
-          "https://varc.mypinata.cloud/ipfs/QmWyEYp6NVgmDaUnmcee9JQSbZbjFCHXqc1arFtiy4n5KT"
-        )
-      )
-
-      streamSource.getComponent(AudioStream).playing = false
-
-
       //preload_03
       let preload_03 = new Entity()
       let preload_03Path:string = "models/spiral.glb"
@@ -869,7 +853,6 @@ wall_06.setParent(channel_03)
 wall_07.setParent(channel_03)
 wall_08.setParent(channel_03)
 song.setParent(channel_03)
-streamSource.setParent(channel_03)
 preload_03.setParent(channel_03)
 
 //Channel 04 - Parent
@@ -914,11 +897,19 @@ let channel_04 = new Entity()
               rotation: Quaternion.Euler(0, 180, 0)
       }))
 
-      const zone_01 = new Dash_Zone('zone1', new Transform({
-          position: new Vector3(16, 1.5, 16),
-          scale: new Vector3(4, 3, 4)
+      // wind
+      const windobj = new Entity()
+      windobj.addComponent(new BoxShape())
+      windobj.addComponent(wind)
+      windobj.getComponent(BoxShape).withCollisions = false
+      windobj.getComponent(BoxShape).visible = false
+      windobj.addComponent(new Transform({
+          position: new Vector3(24, 16, 24),
+          scale: new Vector3(3, 3, 3)
       }))
-      zone_01.enableDebug()
+      wind.playing = true
+      wind.loop = true
+      wind.volume = .075
 
       //preload_04
       let preload_04 = new Entity()
@@ -933,11 +924,8 @@ let channel_04 = new Entity()
 //Set parent
 trigger_04.setParent(channel_04)
 spiral.setParent(channel_04)
-zone_01.setParent(channel_04)
+windobj.setParent(channel_04)
 preload_04.setParent(channel_04)
-
-//specify start state to run when the scene begins. move/change this line of code to change the starting channel.
-engine.addEntity(channel_04)
 
 //Channel 05 - Parent
 let channel_05 = new Entity()
@@ -947,19 +935,6 @@ let channel_05 = new Entity()
             engine.addEntity(channel_05)
       })
     )
-
-    //topo
-    let topo = new Entity()
-    let topoPath:string = "models/topo.glb"
-        topo.addComponent(new GLTFShape(topoPath))
-        topo.addComponent(pond)
-        topo.addComponent(new Transform({
-            position: new Vector3(0, 0, 0),
-            scale: new Vector3(1, 1, 1),
-            rotation: Quaternion.Euler(0, 180, 0)
-    }))
-    pond.playing = true
-    pond.loop = true
 
       //Channel Trigger 05
       const trigger_05 = new Entity()
@@ -984,7 +959,52 @@ let channel_05 = new Entity()
       }))
       click.playing = true
 
+      //topo
+      let topo = new Entity()
+      let topoPath:string = "models/topo.glb"
+          topo.addComponent(new GLTFShape(topoPath))
+          topo.addComponent(new Transform({
+              position: new Vector3(0, 0, 0),
+              scale: new Vector3(1, 1, 1),
+              rotation: Quaternion.Euler(0, 180, 0)
+      }))
 
+      // #1
+      const myVideoClip = new VideoClip("videos/water.mp4")
+      const alphaTexture = new Texture("images/alpha.png")
+
+      // #2
+      const myVideoTexture = new VideoTexture(myVideoClip)
+
+     // #3
+      const myMaterial = new Material()
+      myMaterial.albedoTexture = myVideoTexture
+      myMaterial.alphaTexture = alphaTexture
+      myMaterial.roughness = 1
+      myMaterial.specularIntensity = 0
+      myMaterial.metallic = 0
+
+      // #4
+
+      const pondwater = new Entity()
+      pondwater.addComponent(new PlaneShape())
+      pondwater.addComponent(myMaterial)
+      pondwater.addComponent(pond)
+      pondwater.getComponent(PlaneShape).withCollisions = false
+      pondwater.addComponent(
+        new Transform({
+          position: new Vector3(24, .31, 24),
+          scale: new Vector3(42, 42, 1),
+          rotation: Quaternion.Euler(90, 0, 0)
+        })
+      )
+      pond.volume = 0.1
+      pond.playing = true
+      pond.loop = true
+
+      // #5
+      myVideoTexture.play()
+      myVideoTexture.loop = true
 
       //preload_05
       let preload_05 = new Entity()
@@ -993,12 +1013,13 @@ let channel_05 = new Entity()
           preload_05.addComponent(new Transform({
               position: new Vector3(0, 0, 0),
               scale: new Vector3(0, 0, 0),
-              rotation: Quaternion.Euler(0, 180, 0)
+              rotation: Quaternion.Euler(0, 0, 0)
       }))
 
 //Set parent
 trigger_05.setParent(channel_05)
 topo.setParent(channel_05)
+pondwater.setParent(channel_05)
 preload_05.setParent(channel_05)
 
 //Channel 06 - Parent
@@ -1007,7 +1028,6 @@ let channel_06 = new Entity()
         new utils.ToggleComponent(utils.ToggleState.On, value => {
             engine.removeEntity(channel_05),
             engine.addEntity(channel_06)
-            engine.addEntity(zone_01)
       })
     )
 
@@ -1044,9 +1064,19 @@ let channel_06 = new Entity()
               rotation: Quaternion.Euler(0, 180, 0)
       }))
 
+      //pors
+      let pots = new Entity()
+      let potsPath:string = "models/pots.glb"
+          pots.addComponent(new GLTFShape(potsPath))
+          pots.addComponent(new Transform({
+              position: new Vector3(0, 0, 0),
+              scale: new Vector3(1, 1, 1),
+              rotation: Quaternion.Euler(0, 180, 0)
+      }))
+
       //preload_06
       let preload_06 = new Entity()
-      let preload_06Path:string = "models/arena.glb"
+      let preload_06Path:string = "models/pavillion.glb"
           preload_06.addComponent(new GLTFShape(preload_06Path))
           preload_06.addComponent(new Transform({
               position: new Vector3(0, 0, 0),
@@ -1057,4 +1087,5 @@ let channel_06 = new Entity()
 //Set parent
 trigger_06.setParent(channel_06)
 arena.setParent(channel_06)
+pots.setParent(channel_06)
 preload_06.setParent(channel_06)
